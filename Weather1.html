@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Weather App</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(to right, #4facfe, #00f2fe);
+      color: white;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+    }
+
+    h1 {
+      margin-bottom: 20px;
+    }
+
+    input {
+      padding: 10px;
+      font-size: 1rem;
+      border: none;
+      border-radius: 4px;
+      margin-right: 10px;
+    }
+
+    button {
+      padding: 10px 15px;
+      font-size: 1rem;
+      background-color: #ffffffcc;
+      color: #333;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    .weather-info {
+      margin-top: 30px;
+      font-size: 1.2rem;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <h1>🌤️ Weather Report </h1>
+  <div>
+    <input type="text" id="locationInput" placeholder="Enter location (e.g. London)">
+    <button onclick="getWeather()">Get Weather</button>
+  </div>
+  <div class="weather-info" id="weatherInfo"></div>
+
+  <script>
+    async function getWeather() {
+      const location = document.getElementById("locationInput").value;
+      if (!location) {
+        alert("Please enter a location.");
+        return;
+      }
+
+      const apiKey = "5da087c31b46411b9bf45545252804";
+      const url = `http://api.weatherapi.com/v1/current.json?key=${apiKey}&q=${encodeURIComponent(location)}&aqi=yes`;
+
+      try {
+        const response = await fetch(url);
+        if (!response.ok) {
+          throw new Error("Location not found.");
+        }
+
+        const data = await response.json();
+        const tempC = data.current.temp_c;
+        const condition = data.current.condition.text;
+
+        document.getElementById("weatherInfo").innerHTML = `
+          <p>📍 <strong>${data.location.name}, ${data.location.country}</strong></p>
+          <p>🌡️ Temperature: <strong>${tempC}°C</strong></p>
+          <p>🌥️ Condition: <strong>${condition}</strong></p>
+        `;
+      } catch (error) {
+        document.getElementById("weatherInfo").innerHTML = `<p>Error: ${error.message}</p>`;
+      }
+    }
+  </script>
+</body>
+</html>
